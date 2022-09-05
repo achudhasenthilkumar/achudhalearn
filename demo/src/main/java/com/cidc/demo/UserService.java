@@ -21,6 +21,9 @@ public class UserService {
 	@Autowired
 	UserRepository userRepository;
 	
+	@Autowired
+	private Object obj;
+	
 	public JSONObject getUser()
 		{
 		String url="https://reqres.in/api/users";
