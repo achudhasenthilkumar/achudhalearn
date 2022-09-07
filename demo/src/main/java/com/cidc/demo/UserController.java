@@ -1,12 +1,11 @@
 package com.cidc.demo;
 
-import java.util.Collection;
-import java.util.Optional;
-
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,29 +23,40 @@ public class UserController {
 	UserRepository UsersRepository;
 
 	@GetMapping("/restapi")
-	public JSONObject restapi() throws Exception {
-		
-		return userService.getuser();
+	public ResponseEntity<Object> restapi(){
+		return CustomResponse.generateResponse("Successfully added data!",HttpStatus.OK,userService.getUser());
 	}
 	@GetMapping("/userDetail")
-	public Collection<User> getuser()
+	public ResponseEntity<Object> getuser()
 	{
-		return userService.getUserdetails();
+		return CustomResponse.generateResponse("Successfully get all user datas!", HttpStatus.OK,userService.getUserdetails());
 	}
 	@GetMapping("/user")
-	public Optional<User> getsingleuser(int id)
+	public ResponseEntity<Object> getsingleuser(int id)
 	{
-		return userService.getsingleUser(id);
+		return CustomResponse.generateResponse("Successfully get a single user data!", HttpStatus.OK,userService.getsingleUser(id));
 	}
 	@PutMapping("/updateuser")
-	public User updateUser(@RequestBody UserVO obj)
+	public ResponseEntity<Object> updateUser(@RequestBody UserVO obj)
 	{
-		return userService.updateEmployee(obj);
+		
+		return CustomResponse.generateResponse("Successfully updated a user data!", HttpStatus.OK,userService.updateEmployee(obj));
 	}
 	@DeleteMapping("/delete")
-	public String deleteUser()
+	public ResponseEntity<Object> delete()
 	{
-		return null;
 		
+		return CustomResponse.generateResponse("Successfully deleted a user data!", HttpStatus.OK,userService.delete());
+		
+	}
+	@DeleteMapping("/deleteuser")
+	public ResponseEntity<Object> deleteUser(Integer id) throws Exception
+	{
+		
+		return CustomResponse.generateResponse("Successfully deleted a single user data!", HttpStatus.OK,userService.deleteUser(id));
+	}
+	@PostMapping("/newuser")
+	public ResponseEntity<Object>newUser(@RequestBody UserVO obj){
+		return CustomResponse.generateResponse("Successfully added a new user!",HttpStatus.OK,userService.CreateUser(obj));
 	}
 }

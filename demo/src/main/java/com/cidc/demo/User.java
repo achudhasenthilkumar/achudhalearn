@@ -6,6 +6,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.antlr.v4.runtime.misc.NotNull;
+
+
 @Entity
 @Table(name="details")
 public class User {
@@ -22,7 +26,17 @@ public class User {
 		private String last_name;
 		@Column(name="avatar")
 		private String avatar;
-		
+		@NotNull 
+		@Column(name="password")
+		private String password;
+
+				public String getPassword() {
+					return password;
+				}
+
+				public void setPassword(String password) {
+					this.password = password;
+				}
 
 				public int getId() {
 					return id;
