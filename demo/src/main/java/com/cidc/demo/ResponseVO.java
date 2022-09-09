@@ -8,7 +8,7 @@ public class ResponseVO {
 	private int code;
 	private String status;
 	private String message;
-	private String response;
+	private Object response;
 	
 	public int getCode() {
 		return code;
@@ -28,10 +28,10 @@ public class ResponseVO {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public String getResponse() {
+	public Object getResponse() {
 		return response;
 	}
-	public void setResponse(String response) {
+	public void setResponse(Object response) {
 		this.response = response;
 	}
 }

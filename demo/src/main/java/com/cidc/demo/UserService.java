@@ -5,13 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import java.util.regex.Pattern;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 
 @Service
 public class UserService {
@@ -22,31 +25,33 @@ public class UserService {
 	@Autowired
 	UserRepository userRepository;
 
-	public JSONObject getUser() {
+//	@Scheduled(fixedRate = 5000)
+	public JSONObject getUser(String email) {
 		String url = "https://reqres.in/api/users";
 		RestTemplate resttemplate = new RestTemplate();
 		JSONObject jsonObject = resttemplate.getForObject(url, JSONObject.class);
-		saveUser(jsonObject);
+		saveUser(jsonObject, email);
 		return jsonObject;
 	}
 
-	public List<User> saveUser(JSONObject jsonObject) {
+	public List<User> saveUser(JSONObject jsonObject, String email) {
 
 		Map<String, User> user = new HashMap<>();
 		List<User> userDetails = (List<User>) jsonObject.get("data");
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String password=passwordEncoder.encode("given_password");
-				for (int i = 0; i < userDetails.size(); i++) {
+		String password = passwordEncoder.encode("given_password");
+		for (int i = 0; i < userDetails.size(); i++) {
 			User userDetail = this.objectMapper.convertValue(userDetails.get(i), User.class);
-			User useremail = userRepository.findByEmail(userDetail.getEmail());
-			if (useremail == null) {
+			User users = userRepository.findByEmail(userDetail.getEmail());
+
+			if (users == null) {
 				user.put(userDetail.getEmail(), userDetail);
 				userDetail.setPassword(password);
-			} else if (useremail != null) {
-				System.out.println("Already exist");
+			} else if (users != null) {
+				System.out.println("not enetered");
 			}
+			userRepository.saveAll(user.values());
 		}
-		userRepository.saveAll(user.values());
 		return userDetails;
 	}
 
@@ -60,7 +65,6 @@ public class UserService {
 
 	public Optional<User> updateEmployee(UserVO obj) {
 		Optional<User> users = userRepository.findById(obj.getId());
-
 		users.get().setEmail(obj.getEmail());
 		users.get().setAvatar(obj.getAvatar());
 		users.get().setFirst_name(obj.getFirst_name());
@@ -83,17 +87,34 @@ public class UserService {
 		}
 		return id;
 	}
-	public Object CreateUser(UserVO obj) {
+
+	public User CreateUser(UserVO obj) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String password=passwordEncoder.encode("given_password");
-	    User user = new User();
-	    user.setAvatar(obj.getAvatar());
-	    user.setEmail(obj.getEmail());
-	    user.setFirst_name(obj.getFirst_name());
-	    user.setLast_name(obj.getLast_name());
-	    user.setPassword(password);
-	    User savedUser = userRepository.save(user);
-		return savedUser;
+		String password = passwordEncoder.encode("given_password");
+
+		User user = new User();
+		user.setAvatar(obj.getAvatar());
+		user.setFirst_name(obj.getFirst_name());
+		user.setLast_name(obj.getLast_name());
+
+		String regex = "^(?=.*[0-9])" + "(?=.*[a-z])(?=.*[A-Z])" + "(?=.*[@#$%^&+=])" + "(?=\\S+$).{8,20}$";
+
+		Pattern p = Pattern.compile(regex);
+
+		if (p.matcher(obj.getPassword()).find()) {
+			user.setPassword(password);
+		} else {
+			System.out.println("please check the given password");
+		}
+		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." + "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z"
+				+ "A-Z]{2,7}$";
+		Pattern pat = Pattern.compile(emailRegex);
+		if (pat.matcher(obj.getEmail()).find()) {
+			user.setEmail(obj.getEmail());
+		} else {
+			System.out.println("please check the given email");
+		}
+		userRepository.save(user);
+		return user;
 	}
-	
 }

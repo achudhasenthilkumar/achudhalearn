@@ -8,6 +8,16 @@ public class UserVO {
 		
 		private int id;
 		
+		private String email;
+		
+		private String first_name;
+
+		private String last_name;
+		
+		private String avatar;
+		
+		private String password;
+		
 		public int getId() {
 			return id;
 		}
@@ -47,15 +57,13 @@ public class UserVO {
 		public void setAvatar(String avatar) {
 			this.avatar = avatar;
 		}
+		public String getPassword() {
+			return password;
+		}
 
-		private String email;
-		
-		private String first_name;
-
-		private String last_name;
-		
-		private String avatar;
-		
+		public void setPassword(String password) {
+			this.password = password;
+		}
 	}
 
 
