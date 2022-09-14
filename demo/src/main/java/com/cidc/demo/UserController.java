@@ -1,7 +1,14 @@
 package com.cidc.demo;
 
+import java.awt.print.Pageable;
+import java.net.http.HttpHeaders;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,19 +16,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/Users")
-
 public class UserController extends CustomResponse {
 
 	@Autowired
-	private UserService userService;
+	UserService userService;
 	
 	@GetMapping("/restapi")
-	public ResponseVO restapi(String email) {
-		return super.generateResponse("Successfully inserted all datas !", HttpStatus.OK, userService.getUser(email));
+	public ResponseVO restapi() {
+		return super.generateResponse("Successfully inserted all datas !", HttpStatus.OK, userService.getUser());
 	}
 	@GetMapping("/userDetail")
 	public ResponseVO getuser() {
@@ -56,9 +63,10 @@ public class UserController extends CustomResponse {
 	public ResponseVO newUser(@RequestBody UserVO obj) {
 		return super.generateResponse("Successfully added a new user!", HttpStatus.OK, userService.CreateUser(obj));
 	}
-//	@GetMapping("/Schedule")
-//	public String Schedule()
-//	{
-//		return userService.fixedDelaySch();
-//	}
+	
+	@GetMapping("/alluser")
+    public ResponseVO getUser(@RequestParam(defaultValue = "0") Integer pageNo,@RequestParam(defaultValue = "6") Integer pageSize,String sortBy) 
+    {
+        return super.generateResponse("Sucessfully get the page",HttpStatus.OK,userService.getAllUser(pageNo,pageSize,sortBy)); 
+    }
 }

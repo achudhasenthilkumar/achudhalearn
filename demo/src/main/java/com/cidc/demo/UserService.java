@@ -1,5 +1,7 @@
 package com.cidc.demo;
 
+import java.awt.print.Pageable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,13 +10,14 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
 
 @Service
 public class UserService {
@@ -26,15 +29,15 @@ public class UserService {
 	UserRepository userRepository;
 
 //	@Scheduled(fixedRate = 5000)
-	public JSONObject getUser(String email) {
+	public JSONObject getUser() {
 		String url = "https://reqres.in/api/users";
 		RestTemplate resttemplate = new RestTemplate();
 		JSONObject jsonObject = resttemplate.getForObject(url, JSONObject.class);
-		saveUser(jsonObject, email);
+		saveUser(jsonObject);
 		return jsonObject;
 	}
 
-	public List<User> saveUser(JSONObject jsonObject, String email) {
+	public List<User> saveUser(JSONObject jsonObject) {
 
 		Map<String, User> user = new HashMap<>();
 		List<User> userDetails = (List<User>) jsonObject.get("data");
@@ -42,16 +45,23 @@ public class UserService {
 		String password = passwordEncoder.encode("given_password");
 		for (int i = 0; i < userDetails.size(); i++) {
 			User userDetail = this.objectMapper.convertValue(userDetails.get(i), User.class);
-			User users = userRepository.findByEmail(userDetail.getEmail());
+//			User userss = userRepository.findByEmail(userDetail.getEmail());
+			Object users = userRepository.findByEmailIn(user.keySet());
 
 			if (users == null) {
 				user.put(userDetail.getEmail(), userDetail);
 				userDetail.setPassword(password);
-			} else if (users != null) {
-				System.out.println("not enetered");
+			} else {
+				User userNew = new User();
+				userNew.setEmail(userDetail.getEmail());
+				userNew.setAvatar(userDetail.getAvatar());
+				userNew.setFirst_name(userDetail.getFirst_name());
+				userNew.setLast_name(userDetail.getLast_name());
+				userNew.setPassword(password);
+				userRepository.save(userNew);
 			}
-			userRepository.saveAll(user.values());
 		}
+		userRepository.saveAll(user.values());
 		return userDetails;
 	}
 
@@ -59,8 +69,13 @@ public class UserService {
 		return userRepository.findAll();
 	}
 
-	public Optional<User> getsingleUser(int id) {
-		return userRepository.findById(id);
+	public Object getsingleUser(int id) {
+		Optional<User> value = userRepository.findById(id);
+		if (value.isEmpty()) {
+			return id + " : does not exist";
+		} else {
+			return userRepository.findById(id);
+		}
 	}
 
 	public Optional<User> updateEmployee(UserVO obj) {
@@ -117,4 +132,30 @@ public class UserService {
 		userRepository.save(user);
 		return user;
 	}
+
+	public Page<User> getAllUser(Integer pageNo, Integer pageSize,String sortBy) {
+		String Desc="Desc";
+		String Asc="Asc";
+		if(sortBy.equals(Asc))
+		{
+			Page<User> user = userRepository.findAllByOrderByIdAsc(PageRequest.of(pageNo, pageSize));
+			return user;
+		}
+		else if(sortBy.equals(Desc))
+		{
+			Page<User> userNew = userRepository.findAllByOrderByIdDesc(PageRequest.of(pageNo, pageSize));
+			return userNew;
+		}
+		else
+		{
+		return null;
+		}
+	}
 }
+//Sort sortOrder = Sort.by(sortBy); 
+//
+//List<User> list = userRepository.findAll(sortOrder);
+//
+//System.out.println(list);
+
+//PageRequest.of(pageSize,pageNo,sortBy)
