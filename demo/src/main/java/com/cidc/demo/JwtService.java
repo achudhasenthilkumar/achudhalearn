@@ -28,7 +28,7 @@ public ResponseVO Jwt(UserVO obj) {
 		
 		if(users==null)
 		{
-		CustomResponse.generateResponse("failed",HttpStatus.BAD_REQUEST,users);
+		return CustomResponse.generateResponse("no value entered",HttpStatus.BAD_REQUEST,users);
 		}	
 		else if(passwordEncoder.matches(obj.getPassword(),decodepass))
 		{
@@ -38,6 +38,6 @@ public ResponseVO Jwt(UserVO obj) {
 
         return CustomResponse.generateResponse("your token",HttpStatus.ACCEPTED, data);
 		}
-		return CustomResponse.generateResponse("wrong email",HttpStatus.BAD_REQUEST,"please check your email and password");
+		return CustomResponse.generateResponse("check email and password",HttpStatus.BAD_REQUEST,"please check your email and password");
 	}
 }

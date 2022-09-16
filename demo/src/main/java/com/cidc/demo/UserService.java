@@ -114,7 +114,6 @@ public class UserService {
 
 	public User CreateUser(UserVO obj) {	
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String password = passwordEncoder.encode("given_password");
 
 		User user = new User();
 		user.setAvatar(obj.getAvatar());
@@ -126,6 +125,7 @@ public class UserService {
 		Pattern p = Pattern.compile(regex);
 
 		if (p.matcher(obj.getPassword()).find()) {
+			String password = passwordEncoder.encode(obj.getPassword());
 			user.setPassword(password);
 		} else {
 			System.out.println("please check the given password");
