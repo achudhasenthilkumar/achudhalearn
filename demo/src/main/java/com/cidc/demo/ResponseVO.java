@@ -1,8 +1,5 @@
 package com.cidc.demo;
 
-import org.json.simple.JSONObject;
-import org.springframework.http.HttpStatus;
-
 public class ResponseVO {
 	
 	private int code;

@@ -16,11 +16,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
 	Optional<User> findById(int id);
 
-	List<User> findByEmailIn(Set<String> keySet);  
-	
+	List<User> findByEmailIn(Set<String> keySet);
+
 	Page<User> findAllByOrderByIdAsc(Pageable pageable);
-	
+
 	Page<User> findAllByOrderByIdDesc(Pageable pageable);
 	
-	List<User> findAll(Sort sort);
+	User findByEmailAndPassword(String emailId, String password);
 }
