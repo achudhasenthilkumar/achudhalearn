@@ -1,17 +1,14 @@
 package com.cidc.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,7 +17,7 @@ public class UserController extends CustomResponse {
 
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	JwtService jwtService;
 
@@ -53,7 +50,7 @@ public class UserController extends CustomResponse {
 	}
 
 	@DeleteMapping("/deleteuser")
-	public ResponseVO deleteUser(Integer id)throws Exception  {
+	public ResponseVO deleteUser(Integer id) throws Exception {
 		return super.generateResponse("Successfully deleted a single user data!", HttpStatus.OK,
 				userService.deleteUser(id));
 	}
@@ -69,9 +66,14 @@ public class UserController extends CustomResponse {
 		return super.generateResponse("Sucessfully get the page", HttpStatus.OK,
 				userService.getAllUser(pageNo, pageSize, sortBy));
 	}
+
 	@PostMapping("/login")
-	public ResponseVO jwt(@RequestBody UserVO obj)
-	{
-		return jwtService.Jwt(obj);	
+	public ResponseVO jwt(@RequestBody UserVO obj) {
+		return jwtService.Jwt(obj);
+	}
+
+	@GetMapping("/auth")
+	public ResponseVO getauth() {
+		return super.generateResponse("Sucess", HttpStatus.OK, userService.getAuth());
 	}
 }

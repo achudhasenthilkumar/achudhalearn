@@ -1,20 +1,22 @@
 package com.cidc.demo;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import java.util.regex.Pattern;
+
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -25,8 +27,10 @@ public class UserService {
 
 	@Autowired
 	UserRepository userRepository;
-	
-//	@Scheduled(fixedRate = 5000)
+
+	private static String secret="secret_key";
+
+	@Scheduled(fixedRate = 5000)
 	public JSONObject getUser() {
 		String url = "https://reqres.in/api/users";
 		RestTemplate resttemplate = new RestTemplate();
@@ -41,19 +45,19 @@ public class UserService {
 		Map<String, User> dbUser = new HashMap<>();
 		List<User> userList = (List<User>) jsonObject.get("data");
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String password = passwordEncoder.encode("given_password");
+		String password = passwordEncoder.encode("User@01");
 		for (int i = 0; i < userList.size(); i++) {
 			User userDetail = this.objectMapper.convertValue(userList.get(i), User.class);
 			user.put(userDetail.getEmail(), userDetail);
 		}
 		List<User> users = userRepository.findByEmailIn(user.keySet());
-		
+
 		for (User userdetail : users) {
 			dbUser.put(userdetail.getEmail(), userdetail);
 		}
 
 		for (int i = 0; i < userList.size(); i++) {
-			
+
 			User detailsOfUser = this.objectMapper.convertValue(userList.get(i), User.class);
 			String email = String.valueOf(detailsOfUser.getEmail());
 			String avatar = String.valueOf(detailsOfUser.getAvatar());
@@ -112,7 +116,7 @@ public class UserService {
 		return id;
 	}
 
-	public User CreateUser(UserVO obj) {	
+	public User CreateUser(UserVO obj) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 		User user = new User();
@@ -155,7 +159,23 @@ public class UserService {
 			return null;
 		}
 	}
+	public Object getAuth()
+	{
+		Principal principal = SecurityContextHolder.getContext().getAuthentication();
+
+//		String aa=((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
+		return principal;
+	}
 }
+
+//String aa=((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
+//return Jwts.parser().setSigningKey(secret).parseClaimsJws(aa).getBody();
+//System.out.println(header);
+//System.out.println(payload);
+//UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//String username = userDetails.getUsername();
+//return username;
+//Base64.Decoder decoder = Base64.getUrlDecoder();
 //User userNew = new User();
 //userNew.setEmail(userDetail.getEmail());
 //userNew.setAvatar(userDetail.getAvatar());
@@ -163,10 +183,22 @@ public class UserService {
 //userNew.setLast_name(userDetail.getLast_name());
 //userNew.setPassword(password);
 //userRepository.save(userNew);
-//Sort sortOrder = Sort.by(sortBy); 
-
+//Sort sortOrder = Sort.by(sortBy);
 //List<User> list = userRepository.findAll(sortOrder);
-
 //System.out.println(list);
-
 //PageRequest.of(pageSize,pageNo,sortBy)
+//String[] chunks = Auth.split("\\.");
+//
+//Base64.Decoder decoder = Base64.getUrlDecoder();
+//
+//String header = new String(decoder.decode(chunks[0]));
+//Object payload = new String(decoder.decode(chunks[1]));
+//
+//Object UserDetails=this.objectMapper.convertValue(payload,Object.class);
+//
+//System.out.println(UserDetails.toString().codePointAt(1));
+//String Authorizationnew=Authorization.trim();
+//Claims claims=Jwts.parser().setSigningKey(secret).parseClaimsJws(Authorization).getBody();
+//claims.get("first_name");
+//System.out.println(claims);
+//return claims;

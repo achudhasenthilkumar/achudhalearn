@@ -21,6 +21,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	Page<User> findAllByOrderByIdAsc(Pageable pageable);
 
 	Page<User> findAllByOrderByIdDesc(Pageable pageable);
-	
-	User findByEmailAndPassword(String emailId, String password);
 }
