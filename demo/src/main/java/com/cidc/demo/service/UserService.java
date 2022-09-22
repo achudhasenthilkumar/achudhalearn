@@ -176,9 +176,19 @@ public class UserService {
 
 		 ObjectMapper mapper = new ObjectMapper();
 
-		JsonNode js=mapper.readTree(payload);
+		 JsonNode js=mapper.readTree(payload);
 
-		return js;
+		 List<String> aa=js.findValuesAsText("sub");
+
+		 String ab=js.findValue("sub").asText();
+
+//		 System.out.println(ab);
+
+//		 String ab=aa.toString();
+//
+		 User usernew=userRepository.findByEmail(ab);
+
+		 return usernew;
 	}
 }
 

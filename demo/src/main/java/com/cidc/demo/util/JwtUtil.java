@@ -31,10 +31,6 @@ public class JwtUtil {
 				.setExpiration(ExpiryAt)
 				.setSubject(users.getEmail());
 
-		claims.put("first_name",users.getFirst_name());
-		claims.put("email",users.getEmail());
-
-
 		return Jwts.builder()
 				.setClaims(claims)
 				.signWith(SignatureAlgorithm.HS512,secret)
