@@ -1,9 +1,11 @@
-package com.cidc.demo;
+package com.cidc.demo.util;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
-import java.util.UUID;
 
 import org.springframework.stereotype.Component;
+
+import com.cidc.demo.entity.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -34,12 +36,24 @@ public class JwtUtil {
 
 
 		return Jwts.builder()
-			    .setId(UUID.randomUUID().toString())
-			    .setSubject(users.getEmail())
 				.setClaims(claims)
 				.signWith(SignatureAlgorithm.HS512,secret)
 				.compact();
 	}
+	  public Claims verify(String authorization) throws Exception {
+
+	        try {
+	            Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authorization).getBody();
+	            return claims;
+	        } catch(Exception e) {
+	            throw new AccessDeniedException("Access Denied");
+	        }
+
+	    }
+	}
+
+
+
 //	//retrieve username from jwt token
 //	public String getUsernameFromToken(String token) {
 //		return getClaimFromToken(token, Claims::getSubject);
@@ -58,4 +72,3 @@ public class JwtUtil {
 //	public Claims getAllClaimsFromToken(String token) {
 //		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 //}
-}

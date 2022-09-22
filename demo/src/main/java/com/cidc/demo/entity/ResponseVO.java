@@ -1,4 +1,4 @@
-package com.cidc.demo;
+package com.cidc.demo.entity;
 
 public class ResponseVO {
 	

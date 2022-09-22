@@ -1,5 +1,6 @@
-package com.cidc.demo;
+package com.cidc.demo.service;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.cidc.demo.entity.User;
+import com.cidc.demo.entity.UserVO;
+import com.cidc.demo.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -157,12 +164,24 @@ public class UserService {
 			return null;
 		}
 	}
+
+	public Object getAuth(String Authorization) throws JsonMappingException, JsonProcessingException {
+
+		String[] chunks = Authorization.split("\\.");
+
+		Base64.Decoder decoder = Base64.getUrlDecoder();
+
+		String header = new String(decoder.decode(chunks[0]));
+		String payload = new String(decoder.decode(chunks[1]));
+
+		 ObjectMapper mapper = new ObjectMapper();
+
+		JsonNode js=mapper.readTree(payload);
+
+		return js;
+	}
 }
-//		Authentication oauth =  SecurityContextHolder.getContext().getAuthentication();
-//
-//		Object currentPrincipalName=oauth.getPrincipal();
-////		String aa=((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
-//		return currentPrincipalName;
+
 
 
 //String aa=((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");

@@ -1,4 +1,4 @@
-package com.cidc.demo;
+package com.cidc.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,9 +7,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.cidc.demo.entity.ResponseVO;
+import com.cidc.demo.entity.UserVO;
+import com.cidc.demo.response.CustomResponse;
+import com.cidc.demo.service.JwtService;
+import com.cidc.demo.service.UserService;
+import com.cidc.demo.util.JwtUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 
 //import com.cidc.Jwt.JwtUtilOne;
@@ -78,8 +88,8 @@ public class UserController extends CustomResponse {
 		return jwtService.Jwt(obj);
 	}
 
-//	@GetMapping("/auth")
-//	public ResponseVO getauth() {
-//		return super.generateResponse("Sucess", HttpStatus.OK,userService.getAuth());
-//	}
+	@GetMapping("/auth")
+	public ResponseVO getauth(@RequestHeader String Authorization) throws JsonMappingException, JsonProcessingException {
+		return super.generateResponse("Sucess", HttpStatus.OK,userService.getAuth(Authorization));
+	}
 }

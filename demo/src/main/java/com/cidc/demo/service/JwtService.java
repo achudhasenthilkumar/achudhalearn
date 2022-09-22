@@ -1,4 +1,4 @@
-package com.cidc.demo;
+package com.cidc.demo.service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.cidc.demo.entity.ResponseVO;
+import com.cidc.demo.entity.User;
+import com.cidc.demo.entity.UserVO;
+import com.cidc.demo.repository.UserRepository;
+import com.cidc.demo.response.CustomResponse;
+import com.cidc.demo.util.JwtUtil;
 
 @Service
 public class JwtService {
