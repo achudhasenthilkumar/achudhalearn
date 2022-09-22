@@ -1,6 +1,5 @@
 package com.cidc.demo;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -159,14 +157,13 @@ public class UserService {
 			return null;
 		}
 	}
-	public Object getAuth()
-	{
-		Principal principal = SecurityContextHolder.getContext().getAuthentication();
-
-//		String aa=((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
-		return principal;
-	}
 }
+//		Authentication oauth =  SecurityContextHolder.getContext().getAuthentication();
+//
+//		Object currentPrincipalName=oauth.getPrincipal();
+////		String aa=((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
+//		return currentPrincipalName;
+
 
 //String aa=((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
 //return Jwts.parser().setSigningKey(secret).parseClaimsJws(aa).getBody();

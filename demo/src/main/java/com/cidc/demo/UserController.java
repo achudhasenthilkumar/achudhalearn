@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
+//import com.cidc.Jwt.JwtUtilOne;
+
 @RestController
 @RequestMapping(value = "/Users")
 public class UserController extends CustomResponse {
@@ -20,6 +23,9 @@ public class UserController extends CustomResponse {
 
 	@Autowired
 	JwtService jwtService;
+
+	@Autowired
+	JwtUtil jwtUtil;
 
 	@GetMapping("/restapi")
 	public ResponseVO restapi() {
@@ -72,8 +78,8 @@ public class UserController extends CustomResponse {
 		return jwtService.Jwt(obj);
 	}
 
-	@GetMapping("/auth")
-	public ResponseVO getauth() {
-		return super.generateResponse("Sucess", HttpStatus.OK, userService.getAuth());
-	}
+//	@GetMapping("/auth")
+//	public ResponseVO getauth() {
+//		return super.generateResponse("Sucess", HttpStatus.OK,userService.getAuth());
+//	}
 }
