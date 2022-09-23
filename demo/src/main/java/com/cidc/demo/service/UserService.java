@@ -11,7 +11,6 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -33,9 +32,7 @@ public class UserService {
 	@Autowired
 	UserRepository userRepository;
 
-	private static String secret="secret_key";
-
-	@Scheduled(fixedRate = 5000)
+//	@Scheduled(fixedRate = 5000)
 	public JSONObject getUser() {
 		String url = "https://reqres.in/api/users";
 		RestTemplate resttemplate = new RestTemplate();
@@ -103,25 +100,25 @@ public class UserService {
 		users.get().setFirst_name(obj.getFirst_name());
 		users.get().setLast_name(obj.getLast_name());
 		userRepository.save(users.get());
-		return users;
+		return null;
 	}
 
 	public String delete() {
 		userRepository.deleteAll();
-		return "deleted";
+		return null;
 	}
 
-	public Object deleteUser(int id) throws Exception{
+	public Object deleteUser(int id) throws Exception {
 		Optional<User> user = userRepository.findById(id);
 		if (user.get() != null) {
 			userRepository.deleteById(id);
 		} else {
 			return id + " does not exist";
 		}
-		return id;
+		return null;
 	}
 
-	public User CreateUser(UserVO obj) {
+	public String CreateUser(UserVO obj) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 		User user = new User();
@@ -148,7 +145,7 @@ public class UserService {
 			System.out.println("please check the given email");
 		}
 		userRepository.save(user);
-		return user;
+		return null;
 	}
 
 	public Page<User> getAllUser(Integer pageNo, Integer pageSize, String sortBy) {
@@ -173,58 +170,16 @@ public class UserService {
 
 		String header = new String(decoder.decode(chunks[0]));
 		String payload = new String(decoder.decode(chunks[1]));
+		String Signature = new String(decoder.decode(chunks[2]));
 
-		 ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper();
 
-		 JsonNode js=mapper.readTree(payload);
+		JsonNode js = mapper.readTree(payload);
 
-		 List<String> aa=js.findValuesAsText("sub");
+		String ab = js.findValue("sub").asText();
 
-		 String ab=js.findValue("sub").asText();
+		User usernew = userRepository.findByEmail(ab);
 
-//		 System.out.println(ab);
-
-//		 String ab=aa.toString();
-//
-		 User usernew=userRepository.findByEmail(ab);
-
-		 return usernew;
+		return usernew;
 	}
 }
-
-
-
-//String aa=((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
-//return Jwts.parser().setSigningKey(secret).parseClaimsJws(aa).getBody();
-//System.out.println(header);
-//System.out.println(payload);
-//UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
-//String username = userDetails.getUsername();
-//return username;
-//Base64.Decoder decoder = Base64.getUrlDecoder();
-//User userNew = new User();
-//userNew.setEmail(userDetail.getEmail());
-//userNew.setAvatar(userDetail.getAvatar());
-//userNew.setFirst_name(userDetail.getFirst_name());
-//userNew.setLast_name(userDetail.getLast_name());
-//userNew.setPassword(password);
-//userRepository.save(userNew);
-//Sort sortOrder = Sort.by(sortBy);
-//List<User> list = userRepository.findAll(sortOrder);
-//System.out.println(list);
-//PageRequest.of(pageSize,pageNo,sortBy)
-//String[] chunks = Auth.split("\\.");
-//
-//Base64.Decoder decoder = Base64.getUrlDecoder();
-//
-//String header = new String(decoder.decode(chunks[0]));
-//Object payload = new String(decoder.decode(chunks[1]));
-//
-//Object UserDetails=this.objectMapper.convertValue(payload,Object.class);
-//
-//System.out.println(UserDetails.toString().codePointAt(1));
-//String Authorizationnew=Authorization.trim();
-//Claims claims=Jwts.parser().setSigningKey(secret).parseClaimsJws(Authorization).getBody();
-//claims.get("first_name");
-//System.out.println(claims);
-//return claims;
