@@ -12,15 +12,17 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+/* Generate a jwttoken
+ * Validate the token
+ * Get the username from the token
+ */
 @Component
 public class TokenManager implements Serializable {
-	/**
-	*
-	*/
+
 	private static final long serialVersionUID = 7008375124389347049L;
 	public static final long TOKEN_VALIDITY = 10 * 60 * 60;
 
-	private String jwtSecret="secret";
+	private String jwtSecret = "secret";
 
 	public String generateJwtToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();

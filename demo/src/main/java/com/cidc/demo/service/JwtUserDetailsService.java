@@ -11,23 +11,27 @@ import org.springframework.stereotype.Service;
 
 import com.cidc.demo.repository.UserRepository;
 
+/* Service class of the jwt token
+ * Retrieving a email,password, and other attributes
+ * For authenticating with a email and password
+ * Spring Security provides in-memory and JDBC implementations of UserDetailsService
+ */
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
 	@Autowired
 	UserRepository userRepository;
 
-   @Override
-   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-	  com.cidc.demo.entity.User email=userRepository.findByEmail(username);
+		com.cidc.demo.entity.User user = userRepository.findByEmail(email);
 
-      if (email !=null) {
-         return new User(username,
-            "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
-            new ArrayList<>());
-      } else {
-         throw new UsernameNotFoundException("User not found with username: " + username);
-      }
-   }
+		if (user != null) {
+			return new User(email, "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
+					new ArrayList<>());
+		} else {
+			throw new UsernameNotFoundException("User not found with username: " + email);
+		}
+	}
 }

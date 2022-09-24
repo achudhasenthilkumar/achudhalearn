@@ -23,6 +23,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/* Service class of the usercontroller
+ */
 @Service
 public class UserService {
 
@@ -32,6 +34,9 @@ public class UserService {
 	@Autowired
 	UserRepository userRepository;
 
+	/* Calls the third party api and get all the details of the users
+	 * Converted the userdetails into jsonobject and pass into saveUser
+	 */
 //	@Scheduled(fixedRate = 5000)
 	public JSONObject getUser() {
 		String url = "https://reqres.in/api/users";
@@ -41,6 +46,9 @@ public class UserService {
 		return jsonObject;
 	}
 
+	/* From the jsonobject we get the userdetails
+	 * Store the details of the users into the database by using map
+	 */
 	public List<User> saveUser(JSONObject jsonObject) {
 
 		Map<String, User> user = new HashMap<>();
@@ -80,10 +88,15 @@ public class UserService {
 		return userList;
 	}
 
+	/* Get all the details of the users from database
+	 */
 	public List<User> getUserdetails() {
 		return userRepository.findAll();
 	}
 
+	/* Get the Single user details by id
+	 * If the user is not available it shows id does not exist
+	 */
 	public Object getsingleUser(int id) {
 		Optional<User> value = userRepository.findById(id);
 		if (value.isEmpty()) {
@@ -93,6 +106,9 @@ public class UserService {
 		}
 	}
 
+	/* Update the details of the users
+	 * By using id
+	 */
 	public Optional<User> updateEmployee(UserVO obj) {
 		Optional<User> users = userRepository.findById(obj.getId());
 		users.get().setEmail(obj.getEmail());
@@ -103,11 +119,16 @@ public class UserService {
 		return null;
 	}
 
+	/* Delete all the userdetails
+	 */
 	public String delete() {
 		userRepository.deleteAll();
 		return null;
 	}
 
+	/* Delete a individual userdetail
+	 * By using a id
+	 */
 	public Object deleteUser(int id) throws Exception {
 		Optional<User> user = userRepository.findById(id);
 		if (user.get() != null) {
@@ -118,9 +139,12 @@ public class UserService {
 		return null;
 	}
 
+	/* Create a new user
+	 * And inserted the new user in database
+	 * The email and passwords will be validate by using regular expression
+	 */
 	public String CreateUser(UserVO obj) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
 		User user = new User();
 		user.setAvatar(obj.getAvatar());
 		user.setFirst_name(obj.getFirst_name());
@@ -148,6 +172,9 @@ public class UserService {
 		return null;
 	}
 
+	/* Get all the users using pagination
+	 * We will have sortby in this
+	 */
 	public Page<User> getAllUser(Integer pageNo, Integer pageSize, String sortBy) {
 		String Desc = "Desc";
 		String Asc = "Asc";
@@ -162,8 +189,12 @@ public class UserService {
 		}
 	}
 
+	/* Get the userdetails from token which we are generated
+	 * Splited the given tokens
+	 * Decoded with base64 and using objectmapper get the email
+	 * By using email get the details of the given user
+	 */
 	public Object getAuth(String Authorization) throws JsonMappingException, JsonProcessingException {
-
 		String[] chunks = Authorization.split("\\.");
 
 		Base64.Decoder decoder = Base64.getUrlDecoder();
@@ -171,15 +202,10 @@ public class UserService {
 		String header = new String(decoder.decode(chunks[0]));
 		String payload = new String(decoder.decode(chunks[1]));
 		String Signature = new String(decoder.decode(chunks[2]));
-
 		ObjectMapper mapper = new ObjectMapper();
-
 		JsonNode js = mapper.readTree(payload);
-
 		String ab = js.findValue("sub").asText();
-
 		User usernew = userRepository.findByEmail(ab);
-
 		return usernew;
 	}
 }

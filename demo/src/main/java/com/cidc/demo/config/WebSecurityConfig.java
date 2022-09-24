@@ -16,6 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.cidc.demo.authenticationentry.JwtAuthenticationEntryPoint;
 import com.cidc.demo.filter.JwtFilter;
 
+/* The configure of the jwt authentication
+ * We will permit the urls in this configure
+ */
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -28,6 +31,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	/* Encodes the password
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -44,14 +49,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
+	/*
+	 * Configure the commenly used urls and permit everyone
+	 * handling the exceptions
+	 * Authencticate the other balance urls
+	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/login").permitAll()
-				.antMatchers("/Users/restapi").permitAll()
-				.antMatchers("/Users/authenticateUser").permitAll()
-				.antMatchers("/Users/newuser").permitAll()
-				.anyRequest().authenticated().and()
-				.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).and().sessionManagement()
+		http.csrf().disable().authorizeRequests().antMatchers("/login").permitAll().antMatchers("/Users/restapi")
+				.permitAll().antMatchers("/Users/authenticateUser").permitAll().antMatchers("/Users/newuser")
+				.permitAll().anyRequest().authenticated().and().exceptionHandling()
+				.authenticationEntryPoint(authenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 	}

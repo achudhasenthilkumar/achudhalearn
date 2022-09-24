@@ -16,6 +16,9 @@ import com.cidc.demo.util.TokenManager;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
+/* Validate the json web token
+ * Checks valid jwt signature,issuer in the filter config
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -30,12 +33,12 @@ public class JwtFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		String tokenHeader = request.getHeader("Authorization");
-		String username = null;
+		String email = null;
 		String token = null;
 		if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
 			token = tokenHeader.substring(7);
 			try {
-				username = tokenManager.getUsernameFromToken(token);
+				email = tokenManager.getUsernameFromToken(token);
 			} catch (IllegalArgumentException e) {
 				System.out.println("Unable to get JWT Token");
 			} catch (ExpiredJwtException e) {
@@ -45,6 +48,5 @@ public class JwtFilter extends OncePerRequestFilter {
 			System.out.println("Bearer String not found in token");
 		}
 		filterChain.doFilter(request, response);
-
-		}
 	}
+}

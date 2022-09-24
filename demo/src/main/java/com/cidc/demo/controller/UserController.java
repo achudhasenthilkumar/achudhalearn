@@ -32,58 +32,55 @@ public class UserController extends CustomResponse {
 
 	@GetMapping("/restapi")
 	public ResponseVO restapi() {
-		return super.generateResponse("Successfully inserted all datas !","ok", HttpStatus.OK, userService.getUser());
+		return super.generateResponse("Successfully inserted all datas !", "ok", HttpStatus.OK, userService.getUser());
 	}
 
 	@GetMapping("/userDetail")
 	public ResponseVO getuser() {
-		return super.generateResponse("Successfully get all user datas!","ok",HttpStatus.OK, userService.getUserdetails());
+		return super.generateResponse("Successfully get all user datas!", "ok", HttpStatus.OK,
+				userService.getUserdetails());
 	}
 
 	@GetMapping("/user")
 	public ResponseVO getsingleuser(int id) {
-		return super.generateResponse("Successfully get a single user data!","ok", HttpStatus.OK,
+		return super.generateResponse("Successfully get a single user data!", "ok", HttpStatus.OK,
 				userService.getsingleUser(id));
 	}
 
 	@PutMapping("/updateuser")
 	public ResponseVO updateUser(@RequestBody UserVO obj) {
-		return super.generateResponse("Successfully updated a user data!","ok", HttpStatus.OK,
+		return super.generateResponse("Successfully updated a user data!", "ok", HttpStatus.OK,
 				userService.updateEmployee(obj));
 	}
 
 	@DeleteMapping("/delete")
 	public ResponseVO delete() {
-		return super.generateResponse("Successfully deleted a user data!","ok", HttpStatus.OK, userService.delete());
+		return super.generateResponse("Successfully deleted a user data!", "ok", HttpStatus.OK, userService.delete());
 
 	}
 
 	@DeleteMapping("/deleteuser")
 	public ResponseVO deleteUser(Integer id) throws Exception {
-		return super.generateResponse("Successfully deleted a single user data!","ok", HttpStatus.OK,
+		return super.generateResponse("Successfully deleted a single user data!", "ok", HttpStatus.OK,
 				userService.deleteUser(id));
 	}
 
 	@PostMapping("/newuser")
 	public ResponseVO newUser(@RequestBody UserVO obj) {
-		return super.generateResponse("Successfully added a new user!","ok", HttpStatus.OK, userService.CreateUser(obj));
+		return super.generateResponse("Successfully added a new user!", "ok", HttpStatus.OK,
+				userService.CreateUser(obj));
 	}
 
 	@GetMapping("/page")
 	public ResponseVO getUser(@RequestParam(defaultValue = "0") Integer pageNo,
 			@RequestParam(defaultValue = "6") Integer pageSize, String sortBy) {
-		return super.generateResponse("Sucessfully get the page","ok", HttpStatus.OK,
+		return super.generateResponse("Sucessfully get the page", "ok", HttpStatus.OK,
 				userService.getAllUser(pageNo, pageSize, sortBy));
 	}
-
-//	@PostMapping("/login")
-//	public ResponseVO jwt(@RequestBody UserVO obj) {
-//		return jwtService.Jwt(obj);
-//	}
 
 	@GetMapping("/authenticateUser")
 	public ResponseVO getauth(@RequestHeader String Authorization)
 			throws JsonMappingException, JsonProcessingException {
-		return super.generateResponse("Sucess", "ok",HttpStatus.OK, userService.getAuth(Authorization));
+		return super.generateResponse("Sucess", "ok", HttpStatus.OK, userService.getAuth(Authorization));
 	}
 }
