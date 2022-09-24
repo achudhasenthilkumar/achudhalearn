@@ -17,18 +17,17 @@ public class JwtUserDetailsService implements UserDetailsService {
 	@Autowired
 	UserRepository userRepository;
 
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+   @Override
+   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+	  com.cidc.demo.entity.User email=userRepository.findByEmail(username);
 
-		com.cidc.demo.entity.User user=userRepository.findByEmail(email);
-
-		if (user!=null) {
-			return new User(email, "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
-					new ArrayList<>());
-		} else {
-			throw new UsernameNotFoundException("email not found with password: " + email);
-		}
-	}
+      if (email !=null) {
+         return new User(username,
+            "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
+            new ArrayList<>());
+      } else {
+         throw new UsernameNotFoundException("User not found with username: " + username);
+      }
+   }
 }
-//

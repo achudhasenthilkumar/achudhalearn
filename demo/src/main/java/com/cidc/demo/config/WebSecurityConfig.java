@@ -18,12 +18,15 @@ import com.cidc.demo.filter.JwtFilter;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
 	@Autowired
 	private JwtAuthenticationEntryPoint authenticationEntryPoint;
-	@Autowired
-	private UserDetailsService userDetailsService;
+
 	@Autowired
 	private JwtFilter filter;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -43,7 +46,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/login").permitAll().anyRequest().authenticated().and()
+		http.csrf().disable().authorizeRequests().antMatchers("/login").permitAll()
+				.antMatchers("/Users/restapi").permitAll()
+				.antMatchers("/Users/authenticateUser").permitAll()
+				.antMatchers("/Users/newuser").permitAll()
+				.anyRequest().authenticated().and()
 				.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

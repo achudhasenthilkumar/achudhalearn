@@ -31,7 +31,7 @@ public class JwtController {
 	public Object createToken(@RequestBody JwtRequestModel request) throws Exception {
 		try {
 			authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+					new UsernamePasswordAuthenticationToken(request.getPassword(), request.getPassword()));
 		} catch (DisabledException e) {
 			throw new Exception("USER_DISABLED", e);
 		} catch (BadCredentialsException e) {
