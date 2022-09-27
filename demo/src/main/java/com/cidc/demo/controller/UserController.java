@@ -20,9 +20,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /*
-* Controller class of all API
-* Method will run and return the HttpResponse in CustomeResponse
-*/
+ * Controller class of all API
+ * Method will run and return the HttpResponse in CustomeResponse
+ */
 @RestController
 @RequestMapping(value = "/Users")
 public class UserController extends CustomResponse {

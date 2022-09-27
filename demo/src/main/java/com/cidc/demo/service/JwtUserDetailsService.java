@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.cidc.demo.repository.UserRepository;
 
-/* Service class of the jwt token
+/*
+ * Service class of the jwt token
  * Retrieving a email,password, and other attributes
  * For authenticating with a email and password
  * Spring Security provides in-memory and JDBC implementations of UserDetailsService

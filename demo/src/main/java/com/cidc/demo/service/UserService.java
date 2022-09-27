@@ -99,11 +99,13 @@ public class UserService {
 	 */
 	public Object getsingleUser(int id) {
 		Optional<User> value = userRepository.findById(id);
+		System.out.println(userRepository.findById(id));
 		if (value.isEmpty()) {
 			return id + " : does not exist";
 		} else {
 			return userRepository.findById(id);
 		}
+
 	}
 
 	/* Update the details of the users

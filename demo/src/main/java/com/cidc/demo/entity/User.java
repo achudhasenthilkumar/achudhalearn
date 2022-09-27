@@ -6,8 +6,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+
+
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "details")
 public class User {

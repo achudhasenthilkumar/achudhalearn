@@ -16,7 +16,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.cidc.demo.authenticationentry.JwtAuthenticationEntryPoint;
 import com.cidc.demo.filter.JwtFilter;
 
-/* The configure of the jwt authentication
+/*
+ * The configure of the jwt authentication
  * We will permit the urls in this configure
  */
 @Configuration

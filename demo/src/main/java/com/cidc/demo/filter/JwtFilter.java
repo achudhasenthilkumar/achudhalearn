@@ -16,7 +16,8 @@ import com.cidc.demo.util.TokenManager;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
-/* Validate the json web token
+/*
+ *  Validate the json web token
  * Checks valid jwt signature,issuer in the filter config
  */
 @Component
