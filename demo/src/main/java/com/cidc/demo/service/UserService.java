@@ -118,7 +118,8 @@ public class UserService {
 		users.get().setFirst_name(obj.getFirst_name());
 		users.get().setLast_name(obj.getLast_name());
 		userRepository.save(users.get());
-		return null;
+		System.out.println("users"+users);
+		return users;
 	}
 
 	/* Delete all the userdetails
