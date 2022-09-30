@@ -1,7 +1,11 @@
 package com.cidc.demo.controller;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cidc.demo.entity.ResponseVO;
 import com.cidc.demo.entity.UserVO;
-import com.cidc.demo.response.CustomResponse;
 import com.cidc.demo.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -25,62 +28,57 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  */
 @RestController
 @RequestMapping(value = "/Users")
-public class UserController extends CustomResponse {
+public class UserController {
 
 	@Autowired
 	UserService userService;
 
 	@GetMapping("/restapi")
-	public ResponseVO restapi() {
-		return super.generateResponse("Successfully inserted all datas !", "ok", HttpStatus.OK, userService.getUser());
+	public JSONObject restapi() throws JsonMappingException, JsonProcessingException {
+		return userService.getUser();
 	}
 
 	@GetMapping("/userDetail")
-	public ResponseVO getuser() {
-		return super.generateResponse("Successfully get all user datas!", "ok", HttpStatus.OK,
-				userService.getUserdetails());
+	public ResponseVO getuser() throws JsonMappingException, JsonProcessingException {
+		return userService.getUserdetails();
 	}
 
 	@GetMapping("/user")
-	public ResponseVO getsingleuser(int id) {
-		return super.generateResponse("Successfully get a single user data!", "ok", HttpStatus.OK,
-				userService.getsingleUser(id));
+	public ResponseVO getsingleuser(int id,HttpServletResponse response) throws IOException {
+		return userService.getsingleUser(id,response);
 	}
 
 	@PutMapping("/updateuser")
-	public ResponseVO updateUser(@RequestBody UserVO obj) {
-		return super.generateResponse("Successfully updated a user data!", "ok", HttpStatus.OK,
-				userService.updateEmployee(obj));
+	public ResponseVO updateUser(@RequestBody UserVO obj) throws JsonMappingException, JsonProcessingException {
+		return userService.updateEmployee(obj);
 	}
 
 	@DeleteMapping("/delete")
-	public ResponseVO delete() {
-		return super.generateResponse("Successfully deleted a user data!", "ok", HttpStatus.OK, userService.delete());
+	public ResponseVO delete() throws JsonMappingException, JsonProcessingException {
+		return userService.delete();
 
 	}
 
 	@DeleteMapping("/deleteuser")
 	public ResponseVO deleteUser(Integer id) throws Exception {
-		return super.generateResponse("Successfully deleted a single user data!", "ok", HttpStatus.OK,
-				userService.deleteUser(id));
+		return userService.deleteUser(id);
 	}
 
 	@PostMapping("/newuser")
-	public ResponseVO newUser(@RequestBody UserVO obj) {
-		return super.generateResponse("Successfully added a new user!", "ok", HttpStatus.OK,
-				userService.CreateUser(obj));
+	public ResponseVO newUser(@RequestBody UserVO obj) throws JsonMappingException, JsonProcessingException {
+
+		return userService.CreateUser(obj);
 	}
 
 	@GetMapping("/page")
 	public ResponseVO getUser(@RequestParam(defaultValue = "0") Integer pageNo,
-			@RequestParam(defaultValue = "6") Integer pageSize, String sortBy) {
-		return super.generateResponse("Sucessfully get the page", "ok", HttpStatus.OK,
-				userService.getAllUser(pageNo, pageSize, sortBy));
+			@RequestParam(defaultValue = "6") Integer pageSize, String sortBy) throws JsonMappingException, JsonProcessingException {
+		return userService.getAllUser(pageNo, pageSize, sortBy);
 	}
 
 	@GetMapping("/authenticateUser")
 	public ResponseVO getauth(@RequestHeader String Authorization)
 			throws JsonMappingException, JsonProcessingException {
-		return super.generateResponse("Sucess", "ok", HttpStatus.OK, userService.getAuth(Authorization));
+		return userService.getAuth(Authorization);
 	}
 }

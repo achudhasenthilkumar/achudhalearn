@@ -1,5 +1,6 @@
 package com.cidc.demo.service;
 
+import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -7,17 +8,22 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.cidc.demo.entity.ResponseVO;
 import com.cidc.demo.entity.User;
 import com.cidc.demo.entity.UserVO;
 import com.cidc.demo.repository.UserRepository;
+import com.cidc.demo.response.CustomResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /* Service class of the usercontroller
  */
 @Service
-public class UserService {
+public class UserService extends CustomResponse {
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -49,7 +55,7 @@ public class UserService {
 	/* From the jsonobject we get the userdetails
 	 * Store the details of the users into the database by using map
 	 */
-	public List<User> saveUser(JSONObject jsonObject) {
+	public ResponseVO saveUser(JSONObject jsonObject) {
 
 		Map<String, User> user = new HashMap<>();
 		Map<String, User> dbUser = new HashMap<>();
@@ -85,59 +91,70 @@ public class UserService {
 			dbUser.put(userDetail.getEmail(), userDetail);
 		}
 		userRepository.saveAll(dbUser.values());
-		return userList;
+	    return super.generateResponse("Sucess", "verified",HttpStatus.OK,userList);
 	}
 
 	/* Get all the details of the users from database
 	 */
-	public List<User> getUserdetails() {
-		return userRepository.findAll();
+	public ResponseVO getUserdetails() {
+		 Object user=userRepository.findAll();
+		 return super.generateResponse("Sucess", "verified",HttpStatus.OK,user);
 	}
 
 	/* Get the Single user details by id
 	 * If the user is not available it shows id does not exist
 	 */
-	public Object getsingleUser(int id) {
+	public ResponseVO getsingleUser(int id, HttpServletResponse response) throws IOException{
 		Optional<User> value = userRepository.findById(id);
 		System.out.println(userRepository.findById(id));
 		if (value.isEmpty()) {
-			return id + " : does not exist";
-		} else {
-			return userRepository.findById(id);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return super.generateResponse("failed", "Check your id",HttpStatus.NOT_FOUND,"error");
 		}
-
+		else {
+			response.setStatus(HttpServletResponse.SC_OK);
+			return super.generateResponse("Sucess", "verified",HttpStatus.OK,userRepository.findById(id));
+		}
 	}
-
 	/* Update the details of the users
 	 * By using id
 	 */
-	public Optional<User> updateEmployee(UserVO obj) {
+	public ResponseVO updateEmployee(UserVO obj) {
 		Optional<User> users = userRepository.findById(obj.getId());
+		if(users.isPresent())
+		{
 		users.get().setEmail(obj.getEmail());
 		users.get().setAvatar(obj.getAvatar());
 		users.get().setFirst_name(obj.getFirst_name());
 		users.get().setLast_name(obj.getLast_name());
 		userRepository.save(users.get());
 		System.out.println("users"+users);
-		return users;
+		return super.generateResponse("Sucess", "verified",HttpStatus.OK,users);
+		}
+		else
+		{
+		return super.generateResponse("failed", "Check your id",HttpStatus.NOT_FOUND,null);
+		}
 	}
 
 	/* Delete all the userdetails
 	 */
-	public String delete() {
+	public ResponseVO delete() {
 		userRepository.deleteAll();
-		return null;
+		return super.generateResponse("Sucess", "verified",HttpStatus.OK,null);
 	}
 
 	/* Delete a individual userdetail
 	 * By using a id
 	 */
-	public Object deleteUser(int id) throws Exception {
+	public ResponseVO deleteUser(int id) throws Exception {
 		Optional<User> user = userRepository.findById(id);
-		if (user.get() != null) {
+		if (user.isPresent()) {
 			userRepository.deleteById(id);
-		} else {
-			return id + " does not exist";
+			return super.generateResponse("Sucess", "verified",HttpStatus.OK,id+" deleted");
+		}
+		else if(user.isEmpty()) {
+			return super.generateResponse("failed", "Check your id",HttpStatus.NOT_FOUND,null);
 		}
 		return null;
 	}
@@ -146,7 +163,7 @@ public class UserService {
 	 * And inserted the new user in database
 	 * The email and passwords will be validate by using regular expression
 	 */
-	public String CreateUser(UserVO obj) {
+	public ResponseVO CreateUser(UserVO obj) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		User user = new User();
 		user.setAvatar(obj.getAvatar());
@@ -172,21 +189,21 @@ public class UserService {
 			System.out.println("please check the given email");
 		}
 		userRepository.save(user);
-		return null;
+		return super.generateResponse("Sucess", "verified",HttpStatus.OK,user);
 	}
 
 	/* Get all the users using pagination
 	 * We will have sortby in this
 	 */
-	public Page<User> getAllUser(Integer pageNo, Integer pageSize, String sortBy) {
+	public ResponseVO getAllUser(Integer pageNo, Integer pageSize, String sortBy) {
 		String Desc = "Desc";
 		String Asc = "Asc";
 		if (sortBy.equals(Asc)) {
 			Page<User> user = userRepository.findAllByOrderByIdAsc(PageRequest.of(pageNo, pageSize));
-			return user;
+			return super.generateResponse("Sucess", "verified",HttpStatus.OK,user);
 		} else if (sortBy.equals(Desc)) {
 			Page<User> userNew = userRepository.findAllByOrderByIdDesc(PageRequest.of(pageNo, pageSize));
-			return userNew;
+			return super.generateResponse("Sucess", "verified",HttpStatus.OK,userNew);
 		} else {
 			return null;
 		}
@@ -197,7 +214,7 @@ public class UserService {
 	 * Decoded with base64 and using objectmapper get the email
 	 * By using email get the details of the given user
 	 */
-	public Object getAuth(String Authorization) throws JsonMappingException, JsonProcessingException {
+	public ResponseVO getAuth(String Authorization) throws JsonMappingException, JsonProcessingException {
 		String[] chunks = Authorization.split("\\.");
 
 		Base64.Decoder decoder = Base64.getUrlDecoder();
@@ -209,6 +226,6 @@ public class UserService {
 		JsonNode js = mapper.readTree(payload);
 		String ab = js.findValue("sub").asText();
 		User usernew = userRepository.findByEmail(ab);
-		return usernew;
+		return super.generateResponse("Sucess", "verified",HttpStatus.OK,usernew);
 	}
 }
